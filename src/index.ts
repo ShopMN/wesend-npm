@@ -1,0 +1,5 @@
+export { WeSend } from './client'
+export { WeSendError } from './errors'
+export type { WeSendErrorCode } from './errors'
+export type { WeSendOptions } from './http'
+export type * from './types'
