@@ -1,5 +1,5 @@
 {
-  "name": "wesend",
+  "name": "@wesend/node",
   "version": "0.1.0",
   "description": "Official Node.js SDK for the WeSend API: SMS, email and one-time code verification for Mongolia.",
   "keywords": [
@@ -50,5 +50,8 @@
     "@types/node": "^20.19.43",
     "tsup": "^8.5.1",
     "typescript": "~5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

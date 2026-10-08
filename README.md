@@ -11,7 +11,7 @@ Full API reference: [wesend.mn/docs](https://wesend.mn/docs)
 ## Install
 
 ```bash
-npm install wesend
+npm install @wesend/node
 ```
 
 Requires Node.js 20 or newer. Works with ESM (`import`) and CommonJS (`require`).
@@ -21,7 +21,7 @@ Requires Node.js 20 or newer. Works with ESM (`import`) and CommonJS (`require`)
 Create an API key in the WeSend dashboard and keep it in the `WESEND_API_KEY` environment variable.
 
 ```ts
-import { WeSend } from 'wesend'
+import { WeSend } from '@wesend/node'
 
 const wesend = new WeSend() // reads WESEND_API_KEY
 
@@ -116,7 +116,7 @@ Every send also returns the new `balance`, so you rarely need to ask separately.
 A failed request throws a `WeSendError`. Branch on `code`. Use `message` only for logs, because its wording can change.
 
 ```ts
-import { WeSend, WeSendError } from 'wesend'
+import { WeSend, WeSendError } from '@wesend/node'
 
 try {
   await wesend.sms.send({ to: '99112233', text: 'Sain baina uu' })
@@ -196,7 +196,7 @@ Request and response fields are named exactly as in the [API reference](https://
 ## CommonJS
 
 ```js
-const { WeSend } = require('wesend')
+const { WeSend } = require('@wesend/node')
 ```
 
 ## License
