@@ -1,19 +1,20 @@
-name: Publish to npm
+name: Release
 
-# Runs when a version tag such as v0.1.0 is pushed. The tag should match the version in package.json.
+# Runs when a version tag such as v0.1.1 is pushed. One tag gives one npm version and one GitHub
+# release, so the two cannot drift apart.
 on:
   push:
     tags: ['v*']
 
-# npm trusted publishing: the job proves to npm which repository and workflow it is, so no npm
-# token is stored here. The workflow has to be named as a trusted publisher in the package's
-# settings on npmjs.com.
+# id-token is for npm trusted publishing: the job proves to npm which repository and workflow it
+# is, so no npm token is stored here. The workflow has to be named as a trusted publisher in the
+# package's settings on npmjs.com. contents: write is for creating the GitHub release.
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,9 +27,36 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
 
+      # npm publishes the version in package.json whatever the tag says, so the two must agree.
+      - name: Check the tag matches package.json
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match version $VERSION in package.json"
+            exit 1
+          fi
+          echo "PACKAGE=$NAME@$VERSION" >> "$GITHUB_ENV"
+
       - name: Install dependencies
         run: npm ci
 
-      # prepublishOnly type-checks and builds first.
-      - name: Publish
-        run: npm publish --access public
+      # prepublishOnly type-checks and builds first. A version that is already on npm is left
+      # alone, so the job can be run again, and a version published by hand still gets its release.
+      - name: Publish to npm
+        run: |
+          if npm view "$PACKAGE" version > /dev/null 2>&1; then
+            echo "$PACKAGE is already on npm"
+          else
+            npm publish
+          fi
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists"
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          fi
