@@ -1,6 +1,6 @@
 {
   "name": "@wesend/node",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Official Node.js SDK for the WeSend API: SMS, email and one-time code verification for Mongolia.",
   "keywords": [
     "wesend",
