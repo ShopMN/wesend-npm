@@ -30,6 +30,8 @@ export interface Message {
   credits: number
   batch_id: string | null
   error: { code: string; message: string } | null
+  /** True when it was made with a sandbox key (`ws_test_…`): nothing was delivered or charged. */
+  sandbox: boolean
   created_at: string
   sent_at: string | null
 }
@@ -50,6 +52,8 @@ export interface Batch {
   failed: number
   /** Charged up front. Each failed message has been refunded. */
   credits: number
+  /** True when it was made with a sandbox key (`ws_test_…`): nothing was delivered or charged. */
+  sandbox: boolean
   created_at: string
   completed_at: string | null
 }
@@ -123,6 +127,8 @@ export interface Verification {
   status: VerificationStatus
   channel: Channel
   to: string
+  /** True when it was made with a sandbox key (`ws_test_…`): nothing was delivered or charged. */
+  sandbox: boolean
   expires_at: string
 }
 

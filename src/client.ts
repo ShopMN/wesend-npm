@@ -11,7 +11,7 @@ export class WeSend {
   readonly pricing: PricingResource
 
   /**
-   * @param apiKey A key that starts with `ws_`. Defaults to the `WESEND_API_KEY` environment variable.
+   * @param apiKey A key that starts with `ws_`, or `ws_test_` for the sandbox. Defaults to the `WESEND_API_KEY` environment variable.
    * Use it only on a server: in browser or mobile code anyone can read it and spend your credits.
    */
   constructor(apiKey?: string, options: WeSendOptions = {}) {

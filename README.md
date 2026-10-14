@@ -95,6 +95,17 @@ try {
 
 To resend a code, call `verify.create` again. The earlier code stops working. Read the current state with `wesend.verify.get(id)`.
 
+## Sandbox
+
+Create a sandbox key (`ws_test_...`) in the dashboard to build and test your integration. It uses the same base URL, the same checks and the same answers as a live key, but nothing is delivered and no credits are charged. It works before DAN verification and after the trial ends.
+
+- Every valid recipient is `sent`, except `99000001` and `fail@sandbox.wesend.mn`, which always fail with `provider_failed`.
+- A verification code is always zeros at its length, for example `000000`.
+- A project may create 1,000 sandbox messages in 24 hours. Sandbox data is deleted after 30 days.
+- Every message, batch and verification carries `sandbox: true`. A sandbox key cannot read live data, and a live key cannot read sandbox data.
+
+Going live is a key swap: replace `WESEND_API_KEY` with a live key.
+
 ## Messages and batches
 
 ```ts
