@@ -4,6 +4,7 @@ export type WeSendErrorCode =
   | 'insufficient_credits'
   | 'subscription_required'
   | 'forbidden'
+  | 'ip_not_allowed'
   | 'trial_recipient'
   | 'not_found'
   | 'verification_expired'
