@@ -17,6 +17,18 @@ export interface SendOptions {
 
 export type MessageStatus = 'queued' | 'processing' | 'sent' | 'failed'
 
+/** What the recipient's mail server did with a sent email. */
+export type DeliveryStatus = 'delivered' | 'delayed' | 'bounced' | 'complained' | 'suppressed' | 'failed'
+
+export interface Delivery {
+  status: DeliveryStatus
+  /** Why it bounced, failed or was suppressed, when the server said. */
+  detail: string | null
+  /** True when a failed or suppressed email was refunded. */
+  refunded: boolean
+  updated_at: string | null
+}
+
 export interface Message {
   id: string
   status: MessageStatus
@@ -34,6 +46,10 @@ export interface Message {
   sandbox: boolean
   created_at: string
   sent_at: string | null
+  /** Email only. The latest delivery report, or null until one arrives. */
+  delivery?: Delivery | null
+  /** Email only. When the recipient's mail server accepted it. */
+  delivered_at?: string | null
 }
 
 /** A message as a send returns it: with the project's new balance. */
