@@ -180,6 +180,14 @@ export interface Pricing {
     latin_part_size: number
     unicode_part_size: number
     max_parts: number
+    /** What a verification SMS starts with: "{name}: ", unless the request sets `brand`. */
+    prefix: {
+      name: string
+      /** Characters the prefix takes from the first part, the ": " included. */
+      length: number
+      /** False when the name holds a Cyrillic letter or another character outside the basic alphabet; the SMS then uses the non-Latin part size. */
+      is_latin: boolean
+    }
   }
   email: { credits: number }
   /** Upcoming periods when SMS rates rise. */
