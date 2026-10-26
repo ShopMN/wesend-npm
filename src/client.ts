@@ -1,5 +1,5 @@
 import { Http, type WeSendOptions } from './http'
-import { BalanceResource, Batches, Email, Messages, PricingResource, Sms, Verify } from './resources'
+import { BalanceResource, Batches, ContactGroups, Contacts, Email, Messages, PricingResource, Sms, Verify } from './resources'
 
 export class WeSend {
   readonly sms: Sms
@@ -9,6 +9,8 @@ export class WeSend {
   readonly batches: Batches
   readonly balance: BalanceResource
   readonly pricing: PricingResource
+  readonly contacts: Contacts
+  readonly contactGroups: ContactGroups
 
   /**
    * @param apiKey A key that starts with `ws_`, or `ws_test_` for the sandbox. Defaults to the `WESEND_API_KEY` environment variable.
@@ -26,5 +28,7 @@ export class WeSend {
     this.batches = new Batches(request)
     this.balance = new BalanceResource(request)
     this.pricing = new PricingResource(request)
+    this.contacts = new Contacts(request)
+    this.contactGroups = new ContactGroups(request)
   }
 }

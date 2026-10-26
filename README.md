@@ -122,6 +122,31 @@ const pricing = await wesend.pricing.get()
 
 Every send also returns the new `balance`, so you rarely need to ask separately.
 
+## Contacts
+
+Keep your customers in WeSend as they sign up, then send them promotions from the dashboard in one click.
+
+```ts
+// Called when someone registers in your system. Posting the same person again updates them.
+const contact = await wesend.contacts.upsert({
+  external_id: user.id,
+  name: 'Бат-Эрдэнэ',
+  phone: '99112233',
+  email: 'bat@example.com',
+  groups: ['Шинэ хэрэглэгч'],
+  marketing: { sms: true, email: true }, // what the person agreed to
+})
+
+// They turned promotions off in your app.
+await wesend.contacts.update(contact.id, { marketing: { sms: false } })
+
+const { data } = await wesend.contacts.list({ external_id: user.id })
+await wesend.contacts.upsertMany(customers) // up to 1,000 at once
+await wesend.contacts.delete(contact.id)
+```
+
+A "no" to promotions sticks. `marketing: { email: true }` does not undo an unsubscribe the person made with the link in an email.
+
 ## Errors
 
 A failed request throws a `WeSendError`. Branch on `code`. Use `message` only for logs, because its wording can change.

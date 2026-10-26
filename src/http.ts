@@ -21,9 +21,11 @@ export interface WeSendOptions {
 }
 
 export interface Call {
-  method: 'GET' | 'POST'
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE'
   path: string
   body?: object
+  /** Doing it twice ends the same as doing it once, so it may be retried without a key. */
+  safe?: boolean
   /** The endpoint takes an Idempotency-Key. */
   idempotent?: boolean
   idempotencyKey?: string
@@ -104,7 +106,7 @@ export class Http {
     const callerKey = call.idempotent ? call.idempotencyKey || undefined : undefined
     let key = call.idempotent ? callerKey ?? newKey() : undefined
     // Asking again is safe when the request changes nothing, or when its key makes the repeat a no-op.
-    const repeatable = call.method === 'GET' || key !== undefined
+    const repeatable = call.method === 'GET' || call.safe === true || key !== undefined
 
     for(let attempt = 0; ; attempt++) {
       const last = attempt >= this.#maxRetries

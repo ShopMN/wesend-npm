@@ -193,3 +193,96 @@ export interface Pricing {
   /** Upcoming periods when SMS rates rise. */
   holidays: Holiday[]
 }
+
+// ---- Contacts ------------------------------------------------------------------------------
+
+/**
+ * Whether the person agreed to promotions on a channel. `unknown` receives them until they say
+ * no; `unsubscribed` receives none.
+ */
+export type ContactConsent = 'unknown' | 'subscribed' | 'unsubscribed'
+
+export interface Contact {
+  id: string
+  /** The person's id in your own system. */
+  external_id: string | null
+  name: string | null
+  /** 8 digits. */
+  phone: string | null
+  email: string | null
+  company: string | null
+  note: string | null
+  tags: string[]
+  /** Group names. */
+  groups: string[]
+  marketing: { sms: ContactConsent; email: ContactConsent }
+  sandbox: boolean
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface ContactParams {
+  /** Your own id for the person. The contact is found again by it first, then by phone, then by email. */
+  external_id?: string | null
+  name?: string | null
+  /** An 8-digit Mongolian mobile number. A phone or an email is required. */
+  phone?: string | null
+  email?: string | null
+  company?: string | null
+  note?: string | null
+  /** Replaces the contact's tags. Up to 20. */
+  tags?: string[]
+  /** Group names. A name that is new creates the group. Replaces the contact's groups. */
+  groups?: string[]
+  /**
+   * true when the person agreed to promotions on that channel, false when they said no. A no
+   * sticks: true lifts it only when your project recorded it, never when the person
+   * unsubscribed with the link in an email.
+   */
+  marketing?: { sms?: boolean; email?: boolean }
+}
+
+export interface UpsertedContact extends Contact {
+  /** True when the contact was new, false when an existing one was updated. */
+  created: boolean
+}
+
+export interface ContactListParams {
+  /** Finds the one contact with this id, phone or email. */
+  external_id?: string
+  phone?: string
+  email?: string
+  /** Searches the name, phone, email, company and external id. */
+  q?: string
+  tag?: string
+  /** A group name. */
+  group?: string
+  page?: number
+  /** 1 to 100. Defaults to 50. */
+  limit?: number
+}
+
+export interface ContactList {
+  data: Contact[]
+  total: number
+  page: number
+}
+
+export interface ContactBulkResult {
+  created: number
+  updated: number
+  /** One result per contact sent, in the same order. */
+  results: Array<{ id: string; created: boolean } | { error: string }>
+}
+
+export interface DeletedContact {
+  id: string
+  deleted: true
+}
+
+export interface ContactGroup {
+  id: string
+  name: string
+  description: string | null
+  created_at: string | null
+}

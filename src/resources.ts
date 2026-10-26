@@ -1,7 +1,8 @@
 import type { Request } from './http'
 import type {
-  Balance, Batch, EmailSendBulkParams, EmailSendParams, Message, Pricing, SendOptions, SentBatch, SentMessage,
-  SmsSendBulkParams, SmsSendParams, StartedVerification, Verification, VerifyCheckParams, VerifyCreateParams,
+  Balance, Batch, Contact, ContactBulkResult, ContactGroup, ContactList, ContactListParams, ContactParams, DeletedContact,
+  EmailSendBulkParams, EmailSendParams, Message, Pricing, SendOptions, SentBatch, SentMessage, SmsSendBulkParams,
+  SmsSendParams, StartedVerification, UpsertedContact, Verification, VerifyCheckParams, VerifyCreateParams,
 } from './types'
 
 const id = (value: string) => encodeURIComponent(value)
@@ -78,5 +79,45 @@ export class PricingResource extends Resource {
   /** The prices that apply to the project now, and the upcoming holiday rates. */
   get() {
     return this.request<Pricing>({ method: 'GET', path: '/pricing' })
+  }
+}
+
+export class Contacts extends Resource {
+  /** Adds a contact, or updates the one with the same external_id, phone or email. */
+  upsert(params: ContactParams) {
+    return this.request<UpsertedContact>({ method: 'POST', path: '/contacts', body: params, safe: true })
+  }
+
+  /** Up to 1,000 contacts in one call. Each is answered on its own: one bad contact does not stop the rest. */
+  upsertMany(contacts: ContactParams[]) {
+    return this.request<ContactBulkResult>({ method: 'POST', path: '/contacts/bulk', body: { contacts }, safe: true })
+  }
+
+  /** A page of contacts, or the one contact with the given external_id, phone or email. */
+  list(params: ContactListParams = {}) {
+    const query = new URLSearchParams()
+    for(const [name, value] of Object.entries(params)) if(value !== undefined && value !== null && value !== '') query.set(name, String(value))
+    const search = query.toString()
+    return this.request<ContactList>({ method: 'GET', path: `/contacts${search ? `?${search}` : ''}` })
+  }
+
+  get(contactId: string) {
+    return this.request<Contact>({ method: 'GET', path: `/contacts/${id(contactId)}` })
+  }
+
+  /** Changes only the fields that are sent. */
+  update(contactId: string, params: ContactParams) {
+    return this.request<Contact>({ method: 'PATCH', path: `/contacts/${id(contactId)}`, body: params, safe: true })
+  }
+
+  /** Deletes the contact. A "no" to promotions it gave is kept. */
+  delete(contactId: string) {
+    return this.request<DeletedContact>({ method: 'DELETE', path: `/contacts/${id(contactId)}`, safe: true })
+  }
+}
+
+export class ContactGroups extends Resource {
+  list() {
+    return this.request<{ data: ContactGroup[] }>({ method: 'GET', path: '/contact-groups' })
   }
 }
