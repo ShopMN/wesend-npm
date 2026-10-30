@@ -1,6 +1,6 @@
 import type { Request } from './http'
 import type {
-  Balance, Batch, Contact, ContactBulkResult, ContactGroup, ContactList, ContactListParams, ContactParams, DeletedContact,
+  Balance, Batch, Carrier, Contact, ContactBulkResult, ContactGroup, ContactList, ContactListParams, ContactParams, DeletedContact,
   EmailSendBulkParams, EmailSendParams, Message, Pricing, SendOptions, SentBatch, SentMessage, SmsSendBulkParams,
   SmsSendParams, StartedVerification, UpsertedContact, Verification, VerifyCheckParams, VerifyCreateParams,
 } from './types'
@@ -72,6 +72,13 @@ export class Batches extends Resource {
 export class BalanceResource extends Resource {
   get() {
     return this.request<Balance>({ method: 'GET', path: '/balance' })
+  }
+}
+
+export class Carriers extends Resource {
+  /** The operators WeSend sends to, with the numbers each owns. Their ids are the keys of `text_by_carrier`. */
+  list() {
+    return this.request<{ data: Carrier[] }>({ method: 'GET', path: '/carriers' })
   }
 }
 

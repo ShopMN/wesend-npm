@@ -118,6 +118,7 @@ const batch = await wesend.batches.get(id)    // status: processing or completed
 ```ts
 const { balance, next_expiry } = await wesend.balance.get()
 const pricing = await wesend.pricing.get()
+const { data: carriers } = await wesend.carriers.list() // mobicom, unitel, skytel, gmobile, ondo, lime
 ```
 
 Every send also returns the new `balance`, so you rarely need to ask separately.

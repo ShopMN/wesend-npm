@@ -81,17 +81,37 @@ export interface SentBatch extends Batch {
 
 // ---- SMS -----------------------------------------------------------------------------------
 
+export type SmsCarrier = 'mobicom' | 'unitel' | 'skytel' | 'gmobile' | 'ondo' | 'lime'
+
+export interface Carrier {
+  /** The key `text_by_carrier` takes. */
+  id: SmsCarrier
+  name: string
+  /** How its numbers start: two digits, or a range such as `5050-5099`. */
+  prefixes: string[]
+  /** Brands on its network, such as KAOS on Mobicom and Toki on Unitel. */
+  includes: { name: string; prefixes: string[] }[]
+  /** False when it does not deliver an SMS of two or more parts (Mobicom): a long text goes as separate SMS, each one part. */
+  multipart: boolean
+  /** False when links are removed from the text on its route (ONDO, Lime). */
+  links: boolean
+}
+
 export interface SmsSendParams {
   /** An 8-digit number. `+976`, spaces and dashes are accepted. */
   to: string
-  /** At most 5 parts. */
+  /** At most 4 parts. A Mobicom number gets a longer text as separate one-part SMS, cut between words. */
   text: string
+  /** A text of its own for one operator's numbers, sent instead of `text`. Each at most 4 parts. */
+  text_by_carrier?: Partial<Record<SmsCarrier, string>>
 }
 
 export interface SmsSendBulkParams {
   /** 1 to 1,000 numbers. Duplicates are merged. */
   to: string[]
   text: string
+  /** A text of its own for one operator's numbers, sent instead of `text`. Each number is priced by its own text. */
+  text_by_carrier?: Partial<Record<SmsCarrier, string>>
 }
 
 // ---- Email ---------------------------------------------------------------------------------
