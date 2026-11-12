@@ -198,6 +198,8 @@ export interface Balance {
   balance: number
   /** The credits that expire first, or null when there are no active credits. */
   next_expiry: { credits: number; expires_at: string } | null
+  /** True when WeSend gave the project unlimited access: it sends without spending its balance. */
+  unlimited?: boolean
 }
 
 export interface Holiday {
