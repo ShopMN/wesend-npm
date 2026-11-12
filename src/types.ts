@@ -79,6 +79,24 @@ export interface SentBatch extends Batch {
   balance: number
 }
 
+/**
+ * How an SMS text is billed. `latin` fits 155 characters a part; `unicode` fits 65. One character
+ * outside the Latin (ASCII) set, such as an emoji, `₮` or a curly quote, makes the whole text
+ * `unicode`: `non_latin_characters` lists each such character once, up to 50.
+ */
+export interface SmsEncoding {
+  encoding: 'latin' | 'unicode'
+  non_latin_characters: string[]
+}
+
+/** An SMS as `sms.send` returns it: with how the text it got was billed. */
+export interface SentSms extends SentMessage, SmsEncoding {}
+
+/** An SMS batch as `sms.sendBulk` returns it. The encoding is that of `text`; each `text_by_carrier` text has its own. */
+export interface SentSmsBatch extends SentBatch, SmsEncoding {
+  encoding_by_carrier?: Partial<Record<SmsCarrier, SmsEncoding>>
+}
+
 // ---- SMS -----------------------------------------------------------------------------------
 
 export type SmsCarrier = 'mobicom' | 'unitel' | 'skytel' | 'gmobile' | 'ondo' | 'lime'

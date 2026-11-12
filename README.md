@@ -50,6 +50,18 @@ const batch = await wesend.sms.sendBulk({
 })
 ```
 
+A part holds 155 characters when every character is Latin (ASCII), and 65 otherwise. One emoji,
+`₮` or curly quote in a text written in Latin letters makes the whole text Unicode. Each SMS send
+says which:
+
+```ts
+const message = await wesend.sms.send({ to: '99112233', text: 'Une 10,000₮ 🙂' })
+message.encoding              // 'unicode'
+message.non_latin_characters  // ['₮', '🙂']
+```
+
+A `message_too_long` error carries the same two fields.
+
 ## Email
 
 ```ts

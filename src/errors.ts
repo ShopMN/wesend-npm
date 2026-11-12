@@ -52,6 +52,9 @@ export class WeSendError extends Error {
   declare readonly invalid?: string[]
   /** `provider_failed`: the id of the failed message. */
   declare readonly id?: string
+  /** `message_too_long` on an SMS: how the text was billed, and the characters that made it `unicode`. */
+  declare readonly encoding?: 'latin' | 'unicode'
+  declare readonly non_latin_characters?: string[]
 
   constructor(message: string, { status, code, retryAfter = null, details, cause }: WeSendErrorInit) {
     super(message, { cause })

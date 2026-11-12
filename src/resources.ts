@@ -1,7 +1,7 @@
 import type { Request } from './http'
 import type {
   Balance, Batch, Carrier, Contact, ContactBulkResult, ContactGroup, ContactList, ContactListParams, ContactParams, DeletedContact,
-  EmailSendBulkParams, EmailSendParams, Message, Pricing, SendOptions, SentBatch, SentMessage, SmsSendBulkParams,
+  EmailSendBulkParams, EmailSendParams, Message, Pricing, SendOptions, SentBatch, SentMessage, SentSms, SentSmsBatch, SmsSendBulkParams,
   SmsSendParams, StartedVerification, UpsertedContact, Verification, VerifyCheckParams, VerifyCreateParams,
 } from './types'
 
@@ -18,12 +18,12 @@ abstract class Resource {
 export class Sms extends Resource {
   /** Sends to one number. When this resolves, the message has been handed to the operator. */
   send(params: SmsSendParams, options: SendOptions = {}) {
-    return this.request<SentMessage>({ method: 'POST', path: '/sms', body: params, idempotent: true, idempotencyKey: options.idempotencyKey })
+    return this.request<SentSms>({ method: 'POST', path: '/sms', body: params, idempotent: true, idempotencyKey: options.idempotencyKey })
   }
 
   /** Queues one text for up to 1,000 numbers. Follow it with `batches.get`. */
   sendBulk(params: SmsSendBulkParams, options: SendOptions = {}) {
-    return this.request<SentBatch>({ method: 'POST', path: '/sms/bulk', body: params, idempotent: true, idempotencyKey: options.idempotencyKey })
+    return this.request<SentSmsBatch>({ method: 'POST', path: '/sms/bulk', body: params, idempotent: true, idempotencyKey: options.idempotencyKey })
   }
 }
 
