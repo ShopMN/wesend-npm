@@ -191,6 +191,7 @@ try {
 | `status` | The HTTP status, or `null` when no response arrived. |
 | `message` | A description in English. |
 | `retryAfter` | Seconds to wait before trying again, when the API says so. Otherwise `null`. |
+| `requestId` | The id WeSend gave the request. Quote it to support@wesend.mn, or find it in the dashboard's API request log. `null` when no response arrived. |
 | `balance`, `required` | On `insufficient_credits`. |
 | `attempts_remaining` | On `invalid_code`. |
 | `invalid` | On a bulk send with bad recipients: the entries that were refused, up to 50. |

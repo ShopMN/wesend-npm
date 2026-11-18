@@ -49,17 +49,18 @@ function parse(text: string): Record<string, unknown> | null {
   }
 }
 
-function errorOf(status: number, body: Record<string, unknown> | null, retryAfterHeader: string | null) {
+function errorOf(status: number, body: Record<string, unknown> | null, retryAfterHeader: string | null, requestIdHeader: string | null = null) {
   const seconds = Number(retryAfterHeader)
   const retryAfter = retryAfterHeader && Number.isFinite(seconds) && seconds >= 0 ? seconds : null
 
   const error = body?.error
   if(error && typeof error === 'object' && 'code' in error && typeof error.code === 'string') {
-    const { code, message, ...details } = error as { code: string; message?: unknown }
-    return new WeSendError(typeof message === 'string' ? message : code, { status, code, retryAfter, details })
+    const { code, message, request_id, ...details } = error as { code: string; message?: unknown; request_id?: unknown }
+    const requestId = typeof request_id === 'string' ? request_id : requestIdHeader
+    return new WeSendError(typeof message === 'string' ? message : code, { status, code, retryAfter, requestId, details })
   }
   // Not the API's own answer: a proxy or gateway in between, or a wrong baseUrl.
-  return new WeSendError(`Unexpected response from WeSend (HTTP ${status}).`, { status, code: 'unexpected_response', retryAfter })
+  return new WeSendError(`Unexpected response from WeSend (HTTP ${status}).`, { status, code: 'unexpected_response', retryAfter, requestId: requestIdHeader })
 }
 
 function connectionError(cause: unknown) {
@@ -133,7 +134,7 @@ export class Http {
       const body = parse(text)
       if(response.ok && body) return body as T
 
-      const error = errorOf(response.status, body, response.headers.get('retry-after'))
+      const error = errorOf(response.status, body, response.headers.get('retry-after'), response.headers.get('x-request-id'))
       const wait = last ? null : retryIn(error, attempt, { repeatable, callerKey: callerKey !== undefined })
       if(wait === null) throw error
       // The API has this key down as a failed send, and would answer a repeat with that failure.

@@ -29,6 +29,7 @@ interface WeSendErrorInit {
   status: number | null
   code: WeSendErrorCode
   retryAfter?: number | null
+  requestId?: string | null
   details?: Record<string, unknown>
   cause?: unknown
 }
@@ -40,6 +41,8 @@ export class WeSendError extends Error {
   readonly code: WeSendErrorCode
   /** Seconds to wait before trying again, from the Retry-After header. */
   readonly retryAfter: number | null
+  /** The id WeSend gave the request (the X-Request-Id header). Name it when writing to support. Null when no response arrived. */
+  readonly requestId: string | null
 
   // The extra fields the API puts on some errors, named as the API names them.
   /** `insufficient_credits`: the credits the project has. */
@@ -56,7 +59,7 @@ export class WeSendError extends Error {
   declare readonly encoding?: 'latin' | 'unicode'
   declare readonly non_latin_characters?: string[]
 
-  constructor(message: string, { status, code, retryAfter = null, details, cause }: WeSendErrorInit) {
+  constructor(message: string, { status, code, retryAfter = null, requestId = null, details, cause }: WeSendErrorInit) {
     super(message, { cause })
     // First, so that nothing the API sends can replace the fields set below.
     Object.assign(this, details)
@@ -64,5 +67,6 @@ export class WeSendError extends Error {
     this.status = status
     this.code = code
     this.retryAfter = retryAfter
+    this.requestId = requestId
   }
 }
